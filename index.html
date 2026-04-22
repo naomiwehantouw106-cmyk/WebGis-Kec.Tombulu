@@ -9,105 +9,71 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        html, body, #map { width: 100%; height: 100%; padding: 0; margin: 0; background: #f0f4f0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        #side-panel { position: absolute; top: 20px; left: 20px; width: 340px; max-height: 90vh; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255, 255, 255, 0.4); display: flex; flex-direction: column; transition: all 0.5s ease; overflow: hidden; }
-        #side-panel.minimized { transform: translateX(-380px); opacity: 0; }
-        #toggle-panel { position: absolute; top: 20px; left: 20px; z-index: 1001; background: #4CAF50; color: white; border: none; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
-        #side-panel:not(.minimized) ~ #toggle-panel { left: 375px; background: #ff5252; }
-        .panel-header { background: #4CAF50; color: white; padding: 20px; text-align: center; }
-        .student-info { background: #2E7D32; color: #e8f5e9; padding: 10px; font-size: 0.75rem; line-height: 1.4; border-bottom: 3px solid #81C784; }
-        .panel-content { padding: 15px 20px; overflow-y: auto; color: #333; }
-        .info-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid #4CAF50; font-size: 0.85rem; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .info-card b { color: #2E7D32; display: block; margin-bottom: 4px; font-size: 0.9rem; }
-        .village-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; list-style: none; padding: 0; }
-        .village-item { background: #edf7ed; padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 600; color: #2E7D32; transition: 0.2s; border: 1px solid transparent; }
-        .village-item:hover { background: #4CAF50; color: white; }
+        html, body, #map { width: 100%; height: 100%; padding: 0; margin: 0; background: #f0f4f0; font-family: 'Segoe UI', sans-serif; }
+        #side-panel { position: absolute; top: 20px; left: 20px; width: 320px; max-height: 85vh; background: white; z-index: 1000; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
+        .panel-header { background: #2E7D32; color: white; padding: 15px; text-align: center; }
+        .student-info { background: #f9f9f9; padding: 10px; font-size: 0.8rem; border-bottom: 1px solid #eee; color: #333; }
+        .panel-content { padding: 15px; overflow-y: auto; }
+        .village-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .village-btn { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #2E7D32; text-align: center; }
+        .village-btn:hover { background: #2E7D32; color: white; }
     </style>
 </head>
 <body>
 
-    <button id="toggle-panel">☰</button>
-
     <div id="side-panel">
         <div class="panel-header">
-            <h2 style="margin:0; font-size:1.1rem;">WEB GIS KEC. TOMBULU</h2>
-            <small>KABUPATEN MINAHASA</small>
+            <h3 style="margin:0">WEB GIS KEC. TOMBULU</h3>
         </div>
-
         <div class="student-info">
             <b>Nama:</b> Naomi Lovelista Wehantouw<br>
             <b>NIM:</b> 241011060019<br>
-            <b>Kelas:</b> Sistem Informasi A 2024<br>
-            <b>Mata Kuliah:</b> Sistem Informasi Geografis Maritim
+            <b>Mata Kuliah:</b> SIG Maritim
         </div>
-        
         <div class="panel-content">
-            <div class="info-card"><b>📍 Lokasi & Administrasi</b> Terletak di Kabupaten Minahasa, dengan pusat di Desa Kembes.</div>
-            <div class="info-card"><b>📜 Sejarah Pembentukan</b> Hasil pemekaran dari Kec. Pineleng dan Kec. Airmadidi.</div>
-            <div class="info-card"><b>🌍 Geografi</b> Luas wilayah ±97,62 Km², berbatasan dengan Tomohon dan Minut.</div>
-            <div class="info-card"><b>🗣️ Suku & Bahasa</b> Suku Tombulu (sub-etnis Minahasa) & Bahasa Tombulu.</div>
-            <div class="info-card"><b>🏡 Karakteristik</b> Wilayah perbukitan asri, perladangan, dan pemukiman.</div>
-            
-            <p style="font-weight:bold; font-size:0.9rem; color:#1B5E20; margin:10px 0;">Daftar Desa:</p>
-            <div class="village-grid" id="village-list"></div>
+            <p style="margin:0; font-size: 0.9rem;">Klik desa untuk melihat lokasi:</p>
+            <div class="village-grid" id="v-list"></div>
         </div>
     </div>
 
     <div id="map"></div>
 
+    <script src="KECTOMBULU_2.js"></script>
+
     <script>
-        // --- DATA JALUR (HASIL PASTE DARI FILE KECTOMBULU_2.js) ---
-        // Naomi, saya sudah isikan data dari foto yang kamu kirim tadi di bawah ini:
-        var json_KECTOMBULU_2 = {"type":"FeatureCollection","name":"KECTOMBULU_2","features":[{"type":"Feature","properties":{"WADMKK":"Minahasa","WADMPR":"Sulawesi Utara"},"geometry":{"type":"MultiPolygon","coordinates":[[[ [124.918506797,1.351279872],[124.918606159,1.351140195],[124.918771594,1.35081855],[124.918810872,1.350600203],[124.918873844,1.348290552],[124.918960486,1.347874198],[124.918506407,1.347867141],[124.91762233,1.347767158],[124.916954959,1.347734126],[124.916471157,1.347667387],[124.915703682,1.347483411],[124.914836073,1.347232387],[124.914035184,1.346981313],[124.911868719,1.34626502],[124.911250439,1.34604344],[124.910558563,1.345807113],[124.909807763,1.345496806],[124.90933668,1.345304718],[124.908850814,1.345038619],[124.908497382,1.344742806],[124.907767037,1.344184474],[124.907293083,1.343754216],[124.907019595,1.343433747],[124.90687356,1.343039878],[124.906736582,1.342581867],[124.906581448,1.342197171],[124.906462803,1.341885741],[124.906164516,1.340917705],[124.905931174,1.340513715],[124.905794344,1.340214735],[124.905616936,1.339928164],[124.905577449,1.339722454],[124.905561523,1.339469253],[124.905569174,1.339192295],[124.905576917,1.339034029],[124.905537418,1.338812494],[124.905490115,1.338678013],[124.905395575,1.338488176],[124.905332522,1.338322053],[124.905300914,1.338140079],[124.905277146,1.337918531],[124.905292571,1.337522872],[124.905331576,1.337095542],[124.905372794,1.336343313],[124.905372548,1.336024853],[124.905223781,1.335537329],[124.905035542,1.335179206],[124.904716089,1.33482443],[124.904318948,1.33453064],[124.903921838,1.334114251] ]]]}};
+        var map = L.map('map').setView([1.41, 124.88], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // --- KONFIGURASI MAP ---
-        var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-        var satellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}');
+        // Munculkan Batas Daerah (Warna Hijau)
+        if (typeof json_KECTOMBULU_2 !== 'undefined') {
+            L.geoJson(json_KECTOMBULU_2, {
+                style: { color: "#2E7D32", weight: 2, fillColor: "#4CAF50", fillOpacity: 0.3 }
+            }).addTo(map);
+        }
 
-        var map = L.map('map', { layers: [street], zoomControl: false });
-
-        // Tampilkan Batas Wilayah
-        var boundary = L.geoJson(json_KECTOMBULU_2, {
-            style: { color: "#2E7D32", weight: 3, fillOpacity: 0.1 }
-        }).addTo(map);
-
-        // Zoom otomatis ke batas wilayah
-        map.fitBounds(boundary.getBounds());
-
-        L.control.zoom({ position: 'topright' }).addTo(map);
-        L.control.layers({"Peta Jalan": street, "Satelit": satellite}, null, {position: 'topright'}).addTo(map);
-
-        // Daftar Desa
         const villages = [
-            { name: "Tikela", lat: 1.455817, lng: 124.87683 },
-            { name: "Sawangan", lat: 1.449459, lng: 124.882995 },
-            { name: "Kamangta", lat: 1.439584, lng: 124.87381 },
-            { name: "Koka", lat: 1.420229, lng: 124.859798 },
-            { name: "Tombuluan", lat: 1.419866, lng: 124.887259 },
-            { name: "Kembes 1", lat: 1.404513, lng: 124.885460 },
-            { name: "Kembes 2", lat: 1.398200, lng: 124.884007 },
-            { name: "Rumengkor", lat: 1.384346, lng: 124.904857 },
-            { name: "Suluan", lat: 1.353684, lng: 124.899459 }
+            { name: "Tikela", lat: 1.4558, lng: 124.8768 },
+            { name: "Sawangan", lat: 1.4494, lng: 124.8829 },
+            { name: "Kamangta", lat: 1.4395, lng: 124.8738 },
+            { name: "Koka", lat: 1.4202, lng: 124.8597 },
+            { name: "Tombuluan", lat: 1.4198, lng: 124.8872 },
+            { name: "Kembes 1", lat: 1.4045, lng: 124.8854 },
+            { name: "Kembes 2", lat: 1.3982, lng: 124.8840 },
+            { name: "Rumengkor", lat: 1.3843, lng: 124.9048 },
+            { name: "Suluan", lat: 1.3536, lng: 124.8994 }
         ];
 
-        const listContainer = document.getElementById('village-list');
         villages.forEach(v => {
-            const item = document.createElement('div');
-            item.className = 'village-item';
-            item.innerText = v.name;
-            item.onclick = () => {
-                map.flyTo([v.lat, v.lng], 16);
-                L.popup().setLatLng([v.lat, v.lng]).setContent(`<b>Desa ${v.name}</b>`).openOn(map);
-            };
-            listContainer.appendChild(item);
-        });
+            // Tambahkan Marker Standar (Biar tidak pecah gambarnya)
+            L.marker([v.lat, v.lng]).addTo(map).bindPopup("Desa " + v.name);
 
-        // Toggle Panel
-        const btn = document.getElementById('toggle-panel');
-        btn.onclick = () => {
-            document.getElementById('side-panel').classList.toggle('minimized');
-            btn.innerText = document.getElementById('side-panel').classList.contains('minimized') ? '☰' : '✕';
-        };
+            // Tambahkan Tombol di Panel
+            const btn = document.createElement('div');
+            btn.className = 'village-btn';
+            btn.innerText = v.name;
+            btn.onclick = () => { map.flyTo([v.lat, v.lng], 15); };
+            document.getElementById('v-list').appendChild(btn);
+        });
     </script>
 </body>
 </html>
