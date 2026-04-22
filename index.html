@@ -6,73 +6,22 @@
     <title>Tugas SIG Maritim - Naomi Lovelista</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
-        html, body, #map {
-            width: 100%; height: 100%; padding: 0; margin: 0;
-            background: #f0f4f0; font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-
-        /* --- DASHBOARD SIDE PANEL --- */
-        #side-panel {
-            position: absolute; top: 20px; left: 20px; width: 340px;
-            max-height: 90vh; background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(15px); z-index: 1000; border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255, 255, 255, 0.4);
-            display: flex; flex-direction: column; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
-        }
-
+        html, body, #map { width: 100%; height: 100%; padding: 0; margin: 0; background: #f0f4f0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        #side-panel { position: absolute; top: 20px; left: 20px; width: 340px; max-height: 90vh; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); z-index: 1000; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(255, 255, 255, 0.4); display: flex; flex-direction: column; transition: all 0.5s ease; overflow: hidden; }
         #side-panel.minimized { transform: translateX(-380px); opacity: 0; }
-
-        #toggle-panel {
-            position: absolute; top: 20px; left: 20px; z-index: 1001;
-            background: #4CAF50; color: white; border: none; width: 45px; height: 45px;
-            border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-            display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s;
-        }
-
+        #toggle-panel { position: absolute; top: 20px; left: 20px; z-index: 1001; background: #4CAF50; color: white; border: none; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
         #side-panel:not(.minimized) ~ #toggle-panel { left: 375px; background: #ff5252; }
-
         .panel-header { background: #4CAF50; color: white; padding: 20px; text-align: center; }
-        .panel-header h2 { margin: 0; font-size: 1.1rem; letter-spacing: 1px; }
-        
-        /* --- IDENTITAS MAHASISWA --- */
-        .student-info {
-            background: #2E7D32; color: #e8f5e9; padding: 10px; font-size: 0.75rem;
-            line-height: 1.4; border-bottom: 3px solid #81C784;
-        }
-
+        .student-info { background: #2E7D32; color: #e8f5e9; padding: 10px; font-size: 0.75rem; line-height: 1.4; border-bottom: 3px solid #81C784; }
         .panel-content { padding: 15px 20px; overflow-y: auto; color: #333; }
-
-        /* --- INFO BOXES --- */
-        .info-card {
-            background: white; padding: 12px; border-radius: 12px; margin-bottom: 12px;
-            border-left: 4px solid #4CAF50; font-size: 0.85rem; line-height: 1.5;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
+        .info-card { background: white; padding: 12px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid #4CAF50; font-size: 0.85rem; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .info-card b { color: #2E7D32; display: block; margin-bottom: 4px; font-size: 0.9rem; }
-
-        /* --- VILLAGE LIST --- */
-        .village-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; list-style: none; padding: 0;
-        }
-        .village-item {
-            background: #edf7ed; padding: 8px; border-radius: 8px; cursor: pointer;
-            text-align: center; font-size: 0.8rem; font-weight: 600; color: #2E7D32;
-            transition: 0.2s; border: 1px solid transparent;
-        }
+        .village-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; list-style: none; padding: 0; }
+        .village-item { background: #edf7ed; padding: 8px; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 600; color: #2E7D32; transition: 0.2s; border: 1px solid transparent; }
         .village-item:hover { background: #4CAF50; color: white; }
-
-        /* --- LAYER CONTROL CUSTOM --- */
-        .leaflet-control-layers {
-            border-radius: 12px !important; border: none !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-        }
-
-        /* Scrollbar */
-        .panel-content::-webkit-scrollbar { width: 4px; }
-        .panel-content::-webkit-scrollbar-thumb { background: #c2c2c2; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -81,7 +30,7 @@
 
     <div id="side-panel">
         <div class="panel-header">
-            <h2>WEB GIS KEC. TOMBULU</h2>
+            <h2 style="margin:0; font-size:1.1rem;">WEB GIS KEC. TOMBULU</h2>
             <small>KABUPATEN MINAHASA</small>
         </div>
 
@@ -93,77 +42,43 @@
         </div>
         
         <div class="panel-content">
-            <div class="info-card">
-                <b>📍 Lokasi & Administrasi</b>
-                Terletak di Kabupaten Minahasa, Sulawesi Utara, dengan pusat pemerintahan di Desa Kembes.
-            </div>
-
-            <div class="info-card">
-                <b>📜 Sejarah Pembentukan</b>
-                Hasil pemekaran dari Kecamatan Pineleng dan mencakup 2 desa dari Kecamatan Airmadidi.
-            </div>
-
-            <div class="info-card">
-                <b>🌍 Geografi</b>
-                Luas wilayah ±97,62 Km², berbatasan langsung dengan Kota Tomohon dan Kabupaten Minahasa Utara.
-            </div>
-
-            <div class="info-card">
-                <b>🗣️ Suku & Bahasa</b>
-                Dihuni oleh Suku Tombulu (sub-etnis Minahasa) yang menggunakan Bahasa Tombulu dalam keseharian.
-            </div>
-
-            <div class="info-card">
-                <b>🏡 Karakteristik</b>
-                Wilayah perbukitan yang asri, mayoritas lahan digunakan untuk perladangan dan pemukiman warga.
-            </div>
+            <div class="info-card"><b>📍 Lokasi & Administrasi</b> Terletak di Kabupaten Minahasa, dengan pusat di Desa Kembes.</div>
+            <div class="info-card"><b>📜 Sejarah Pembentukan</b> Hasil pemekaran dari Kec. Pineleng dan Kec. Airmadidi.</div>
+            <div class="info-card"><b>🌍 Geografi</b> Luas wilayah ±97,62 Km², berbatasan dengan Tomohon dan Minut.</div>
+            <div class="info-card"><b>🗣️ Suku & Bahasa</b> Suku Tombulu (sub-etnis Minahasa) & Bahasa Tombulu.</div>
+            <div class="info-card"><b>🏡 Karakteristik</b> Wilayah perbukitan asri, perladangan, dan pemukiman.</div>
             
-            <p style="font-weight: bold; font-size: 0.9rem; color: #1B5E20; margin: 15px 0 10px;">Daftar Desa:</p>
+            <p style="font-weight:bold; font-size:0.9rem; color:#1B5E20; margin:10px 0;">Daftar Desa:</p>
             <div class="village-grid" id="village-list"></div>
         </div>
     </div>
 
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="./index_files/KECTOMBULU_2.js"></script>
-
     <script>
-        // --- 1. SETUP MAP & BASE LAYERS ---
-        var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        });
+        // --- DATA GEOJSON (Batas Wilayah) ---
+        // Naomi, hapus teks di bawah ini dan paste isi file KECTOMBULU_2.js mu di sini
+        // Pastikan formatnya: var json_KECTOMBULU_2 = { ... isi data ... };
+        
+        var json_KECTOMBULU_2 = { "type": "FeatureCollection", "features": [] }; 
+        // ^ GANTI BARIS DI ATAS DENGAN ISI FILE JS MU ^
 
-        var satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            attribution: '© Google Satellite'
-        });
+        // --- KONFIGURASI MAP ---
+        var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        var satellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}');
 
-        var map = L.map('map', {
-            layers: [streetLayer], 
-            zoomControl: false
-        }).fitBounds([[1.34, 124.84], [1.46, 124.92]]);
+        var map = L.map('map', { layers: [street], zoomControl: false })
+                  .fitBounds([[1.34, 124.84], [1.46, 124.92]]);
 
         L.control.zoom({ position: 'topright' }).addTo(map);
+        L.control.layers({"Jalan": street, "Satelit": satellite}, null, {position: 'topright'}).addTo(map);
 
-        // --- 2. LAYER SWITCHER ---
-        var baseMaps = {
-            "Peta Jalan": streetLayer,
-            "Satelit": satelliteLayer
-        };
-        L.control.layers(baseMaps, null, { position: 'topright', collapsed: true }).addTo(map);
-
-        // --- 3. OVERLAY DATA (BATAS WILAYAH) ---
-        var boundaryLayer = L.geoJson(json_KECTOMBULU_2, {
-            style: {
-                color: "#2E7D32",
-                weight: 2,
-                opacity: 1,
-                fillColor: "#4CAF50",
-                fillOpacity: 0.1
-            }
+        // Munculkan Batas Wilayah
+        L.geoJson(json_KECTOMBULU_2, {
+            style: { color: "#2E7D32", weight: 2, fillOpacity: 0.1 }
         }).addTo(map);
 
-        // --- 4. VILLAGE DATA ---
+        // Daftar Desa
         const villages = [
             { name: "Tikela", lat: 1.455817, lng: 124.87683 },
             { name: "Sawangan", lat: 1.449459, lng: 124.882995 },
@@ -177,28 +92,22 @@
         ];
 
         const listContainer = document.getElementById('village-list');
-
         villages.forEach(v => {
             const item = document.createElement('div');
             item.className = 'village-item';
             item.innerText = v.name;
             item.onclick = () => {
-                map.flyTo([v.lat, v.lng], 15, { duration: 1.5 });
-                L.popup()
-                    .setLatLng([v.lat, v.lng])
-                    .setContent(`<div style="text-align:center"><b>Desa ${v.name}</b><br>Kec. Tombulu</div>`)
-                    .openOn(map);
+                map.flyTo([v.lat, v.lng], 16);
+                L.popup().setLatLng([v.lat, v.lng]).setContent(`<b>Desa ${v.name}</b>`).openOn(map);
             };
             listContainer.appendChild(item);
         });
 
-        // --- 5. PANEL TOGGLE ---
-        const panel = document.getElementById('side-panel');
-        const btnToggle = document.getElementById('toggle-panel');
-
-        btnToggle.onclick = () => {
-            panel.classList.toggle('minimized');
-            btnToggle.innerText = panel.classList.contains('minimized') ? '☰' : '✕';
+        // Toggle Panel
+        const btn = document.getElementById('toggle-panel');
+        btn.onclick = () => {
+            document.getElementById('side-panel').classList.toggle('minimized');
+            btn.innerText = document.getElementById('side-panel').classList.contains('minimized') ? '☰' : '✕';
         };
     </script>
 </body>
