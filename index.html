@@ -12,10 +12,10 @@
         html, body, #map { width: 100%; height: 100%; padding: 0; margin: 0; background: #f0f4f0; font-family: 'Segoe UI', sans-serif; }
         #side-panel { position: absolute; top: 20px; left: 20px; width: 320px; max-height: 85vh; background: white; z-index: 1000; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #ddd; }
         .panel-header { background: #2E7D32; color: white; padding: 15px; text-align: center; }
-        .student-info { background: #f9f9f9; padding: 10px; font-size: 0.8rem; border-bottom: 1px solid #eee; color: #333; }
+        .student-info { background: #f9f9f9; padding: 10px; font-size: 0.8rem; border-bottom: 1px solid #eee; color: #333; line-height: 1.4; }
         .panel-content { padding: 15px; overflow-y: auto; }
         .village-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .village-btn { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #2E7D32; text-align: center; }
+        .village-btn { background: #e8f5e9; border: 1px solid #c8e6c9; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #2E7D32; text-align: center; transition: 0.2s; }
         .village-btn:hover { background: #2E7D32; color: white; }
     </style>
 </head>
@@ -28,10 +28,14 @@
         <div class="student-info">
             <b>Nama:</b> Naomi Lovelista Wehantouw<br>
             <b>NIM:</b> 241011060019<br>
-            <b>Mata Kuliah:</b> SIG Maritim
+            <b>Kelas:</b> Sistem Informasi A 2024<br>
+            <b>Mata Kuliah:</b> Sistem Informasi Geografis Maritim
         </div>
         <div class="panel-content">
-            <p style="margin:0; font-size: 0.9rem;">Klik desa untuk melihat lokasi:</p>
+            <div style="background:#fff3e0; padding:8px; border-radius:5px; font-size:0.75rem; border-left:4px solid #ff9800; margin-bottom:10px;">
+                <b>Info:</b> Gunakan daftar di bawah untuk navigasi cepat antar desa.
+            </div>
+            <p style="margin:0; font-weight:bold; color:#2E7D32; font-size: 0.85rem;">Daftar Desa:</p>
             <div class="village-grid" id="v-list"></div>
         </div>
     </div>
@@ -41,16 +45,25 @@
     <script src="KECTOMBULU_2.js"></script>
 
     <script>
-        var map = L.map('map').setView([1.41, 124.88], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        // Inisialisasi Peta (Titik tengah Kec. Tombulu)
+        var map = L.map('map', { zoomControl: false }).setView([1.41, 124.88], 12);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-        // Munculkan Batas Daerah (Warna Hijau)
+        L.control.zoom({ position: 'topright' }).addTo(map);
+
+        // Fungsi Memunculkan Batas Wilayah dari file luar
         if (typeof json_KECTOMBULU_2 !== 'undefined') {
             L.geoJson(json_KECTOMBULU_2, {
-                style: { color: "#2E7D32", weight: 2, fillColor: "#4CAF50", fillOpacity: 0.3 }
+                style: { color: "#2E7D32", weight: 3, fillColor: "#4CAF50", fillOpacity: 0.3 }
             }).addTo(map);
+        } else {
+            console.error("Data GeoJSON tidak ditemukan. Pastikan file KECTOMBULU_2.js sudah di-upload ke GitHub.");
         }
 
+        // Data Lokasi Desa
         const villages = [
             { name: "Tikela", lat: 1.4558, lng: 124.8768 },
             { name: "Sawangan", lat: 1.4494, lng: 124.8829 },
@@ -63,16 +76,20 @@
             { name: "Suluan", lat: 1.3536, lng: 124.8994 }
         ];
 
-        villages.forEach(v => {
-            // Tambahkan Marker Standar (Biar tidak pecah gambarnya)
-            L.marker([v.lat, v.lng]).addTo(map).bindPopup("Desa " + v.name);
+        const listContainer = document.getElementById('v-list');
 
-            // Tambahkan Tombol di Panel
+        villages.forEach(v => {
+            // Tambahkan Marker Standar (Guna mengatasi gambar marker yang pecah di GitHub)
+            L.marker([v.lat, v.lng]).addTo(map).bindPopup("<b>Desa " + v.name + "</b><br>Kec. Tombulu");
+
+            // Buat Tombol di Panel Samping
             const btn = document.createElement('div');
             btn.className = 'village-btn';
             btn.innerText = v.name;
-            btn.onclick = () => { map.flyTo([v.lat, v.lng], 15); };
-            document.getElementById('v-list').appendChild(btn);
+            btn.onclick = () => { 
+                map.flyTo([v.lat, v.lng], 15);
+            };
+            listContainer.appendChild(btn);
         });
     </script>
 </body>
