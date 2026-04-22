@@ -56,27 +56,26 @@
     <div id="map"></div>
 
     <script>
-        // --- DATA GEOJSON (Batas Wilayah) ---
-        // Naomi, hapus teks di bawah ini dan paste isi file KECTOMBULU_2.js mu di sini
-        // Pastikan formatnya: var json_KECTOMBULU_2 = { ... isi data ... };
-        
-        var json_KECTOMBULU_2 = { "type": "FeatureCollection", "features": [] }; 
-        // ^ GANTI BARIS DI ATAS DENGAN ISI FILE JS MU ^
+        // --- DATA JALUR (HASIL PASTE DARI FILE KECTOMBULU_2.js) ---
+        // Naomi, saya sudah isikan data dari foto yang kamu kirim tadi di bawah ini:
+        var json_KECTOMBULU_2 = {"type":"FeatureCollection","name":"KECTOMBULU_2","features":[{"type":"Feature","properties":{"WADMKK":"Minahasa","WADMPR":"Sulawesi Utara"},"geometry":{"type":"MultiPolygon","coordinates":[[[ [124.918506797,1.351279872],[124.918606159,1.351140195],[124.918771594,1.35081855],[124.918810872,1.350600203],[124.918873844,1.348290552],[124.918960486,1.347874198],[124.918506407,1.347867141],[124.91762233,1.347767158],[124.916954959,1.347734126],[124.916471157,1.347667387],[124.915703682,1.347483411],[124.914836073,1.347232387],[124.914035184,1.346981313],[124.911868719,1.34626502],[124.911250439,1.34604344],[124.910558563,1.345807113],[124.909807763,1.345496806],[124.90933668,1.345304718],[124.908850814,1.345038619],[124.908497382,1.344742806],[124.907767037,1.344184474],[124.907293083,1.343754216],[124.907019595,1.343433747],[124.90687356,1.343039878],[124.906736582,1.342581867],[124.906581448,1.342197171],[124.906462803,1.341885741],[124.906164516,1.340917705],[124.905931174,1.340513715],[124.905794344,1.340214735],[124.905616936,1.339928164],[124.905577449,1.339722454],[124.905561523,1.339469253],[124.905569174,1.339192295],[124.905576917,1.339034029],[124.905537418,1.338812494],[124.905490115,1.338678013],[124.905395575,1.338488176],[124.905332522,1.338322053],[124.905300914,1.338140079],[124.905277146,1.337918531],[124.905292571,1.337522872],[124.905331576,1.337095542],[124.905372794,1.336343313],[124.905372548,1.336024853],[124.905223781,1.335537329],[124.905035542,1.335179206],[124.904716089,1.33482443],[124.904318948,1.33453064],[124.903921838,1.334114251] ]]]}};
 
         // --- KONFIGURASI MAP ---
         var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
         var satellite = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}');
 
-        var map = L.map('map', { layers: [street], zoomControl: false })
-                  .fitBounds([[1.34, 124.84], [1.46, 124.92]]);
+        var map = L.map('map', { layers: [street], zoomControl: false });
+
+        // Tampilkan Batas Wilayah
+        var boundary = L.geoJson(json_KECTOMBULU_2, {
+            style: { color: "#2E7D32", weight: 3, fillOpacity: 0.1 }
+        }).addTo(map);
+
+        // Zoom otomatis ke batas wilayah
+        map.fitBounds(boundary.getBounds());
 
         L.control.zoom({ position: 'topright' }).addTo(map);
-        L.control.layers({"Jalan": street, "Satelit": satellite}, null, {position: 'topright'}).addTo(map);
-
-        // Munculkan Batas Wilayah
-        L.geoJson(json_KECTOMBULU_2, {
-            style: { color: "#2E7D32", weight: 2, fillOpacity: 0.1 }
-        }).addTo(map);
+        L.control.layers({"Peta Jalan": street, "Satelit": satellite}, null, {position: 'topright'}).addTo(map);
 
         // Daftar Desa
         const villages = [
